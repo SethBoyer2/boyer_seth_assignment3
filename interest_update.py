@@ -1,7 +1,8 @@
-#lib imports
+#lib imports (pprint to pretty print, csv to use csvreader)
 import pprint
+import csv
 
-#dict for customer balances
+#open empty dict for customer balances
 customer_balances = {}
 
 with open("account_balances.txt", "r") as file:
@@ -10,6 +11,8 @@ with open("account_balances.txt", "r") as file:
     #assign key for account number, value for account balance.
     for line in file:
         key, value = line.strip().split("|")
+
+        #convert balance to float to allow cents
         customer_balances[key] = float(value)
     
 #print to confirm previous code worked
@@ -35,7 +38,17 @@ for key, value in customer_balances.items():
     customer_balances[key] = value
     pprint.pp(f"{key}, {value:.6f}")
 
- 
+#write headers, take each line from customer_balances, convert float to str
+#and add a newline so they are on seperate lines.
+with open("updated_balances_SB.csv", "w") as updated_balances:
+    updated_balances.write("Account,balance" + '\n')
+    for account, balance in customer_balances.items():
+        updated_balances.write(f"{account},{str(balance)}\n")
 
+ #use csv reader to print out updated balances
+with open('updated_balances_SB.csv', 'r') as file:
+    reader = csv.DictReader(file)
+    for row in reader:
+        print(row['Account'], row['balance'])
 
 
